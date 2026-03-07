@@ -6,8 +6,11 @@ function Navbar() {
             <Link to="/" className="text-white font-bold hover:underline">
                 Home
             </Link>
+            <Link to="/categories" className="text-white font-bold hover:underline">
+                Category
+            </Link>
             <Link to="/privacy" className="text-white font-bold hover:underline">
-                Books
+                Privacy
             </Link>
         </nav>
     )
