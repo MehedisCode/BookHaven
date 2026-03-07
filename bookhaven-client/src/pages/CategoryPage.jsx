@@ -1,11 +1,23 @@
-const sampleCategories = [
-    { id: 1, name: "Fiction", displayOrder: 1 },
-    { id: 2, name: "Non-Fiction", displayOrder: 2 },
-    { id: 3, name: "Science & Technology", displayOrder: 3 },
-    { id: 4, name: "Children's Books", displayOrder: 4 },
-]
+import axios from "axios"
+import { useEffect, useState } from "react"
+
+async function fetchDate(setCategoryData) {
+    const url = "http://localhost:5106/api/Category"
+    await axios.get(url)
+        .then((response) => {
+            setCategoryData(response.data);
+            console.log(response.data)
+        })
+        .catch((err) => console.log("Error Fetching Category date\n", err))
+}
 
 function CategoryPage() {
+    const [categoryData, setCategoryData] = useState([]);
+
+    useEffect(() => {
+        fetchDate(setCategoryData);
+    }, [])
+
     return (
         <div className="p-6">
             <h1 className="text-3xl font-bold mb-4">Category List</h1>
@@ -26,7 +38,7 @@ function CategoryPage() {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
-                        {sampleCategories.map((category) => (
+                        {categoryData.map((category) => (
                             <tr key={category.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-2 text-sm text-gray-800">
                                     {category.id}
