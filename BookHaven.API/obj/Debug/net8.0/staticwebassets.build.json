@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "SLq507MXBhPaA+vOM5mP19EKhMrXTGPs37K+5COH2DI=",
+  "Source": "BookHaven.API",
+  "BasePath": "_content/BookHaven.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
