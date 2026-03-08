@@ -1,68 +1,124 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import AddCategoryModal from "../components/AddCategoryModal"
-
-async function fetchDate(setCategoryData) {
-    const url = "http://localhost:5106/api/Category"
-    await axios.get(url)
-        .then((response) => {
-            setCategoryData(response.data);
-        })
-        .catch((err) => console.log("Error Fetching Category date\n", err))
-}
+import axios from "axios";
+import { useEffect, useState } from "react";
+import CategoryModal from "../components/CategoryModal";
 
 function CategoryPage() {
-    const [categoryData, setCategoryData] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [categoryName, setCategoryName] = useState();
-    const [categoryOrder, setCategoryOrder] = useState();
+
     const [errOnName, setErrOnName] = useState();
     const [errOnDisplayOrder, setErrOnDisplayOrder] = useState();
 
-    let categoryDataObj = {
-        name: categoryName,
-        displayOrder: categoryOrder
-    }
+    const [fetchedCategoryList, setFetchedCategoryList] = useState([]);
 
-    async function AddCategory() {
-        const url = "http://localhost:5106/api/Category"
+    const [newCategoryObj, setNewCategoryObj] = useState({
+        id: null,
+        name: "",
+        displayOrder: "",
+    });
+
+    const url = "http://localhost:5106/api/Category";
+
+    async function AddCategory(obj) {
         try {
-            await axios.post(url, categoryDataObj);
+            const payload = {
+                name: obj.name,
+                displayOrder: Number(obj.displayOrder),
+            };
+
+            await axios.post(url, payload);
+
             setShowModal(false);
+            setRefresh(!refresh);
         } catch (error) {
-            setErrOnName(error.response.data["Name"]);
-            setErrOnDisplayOrder(error.response.data["DisplayOrder"])
+            setErrOnName(error.response?.data?.Name);
+            setErrOnDisplayOrder(error.response?.data?.DisplayOrder);
         }
     }
 
+    async function HandleUpdateModal(id) {
+        let findCategoryObj = fetchedCategoryList.filter((obj) => obj.id == id)[0];
+
+        setNewCategoryObj(findCategoryObj);
+
+        setShowModal(true);
+    }
+
+    async function HandleUpdate(updatedObj) {
+        try {
+            await axios.put(`${url}/${updatedObj.id}`, updatedObj);
+
+            setShowModal(false);
+            setRefresh(!refresh);
+        } catch (err) {
+            console.log("Error updating data.\n", err);
+        }
+    }
+
+    async function HandleDelete(id) {
+        try {
+            var confirm = window.confirm("Sure! You wanna delete item?");
+
+            if (!confirm) return;
+
+            await axios.delete(`${url}/${id}`);
+
+            setRefresh(!refresh);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async function fetchDate() {
+        await axios
+            .get(url)
+            .then((response) => {
+                setFetchedCategoryList(response.data);
+            })
+            .catch((err) => console.log("Error Fetching Category date\n", err));
+    }
+
     useEffect(() => {
-        fetchDate(setCategoryData);
-    }, [showModal])
+        fetchDate();
+    }, [showModal, refresh]);
 
     return (
         <div className="p-6">
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-3xl font-bold">Category List</h1>
+
                 <button
-                    onClick={() => setShowModal(!showModal)}
+                    onClick={() => {
+                        setErrOnName(null);
+                        setErrOnDisplayOrder(null);
+
+                        setNewCategoryObj({
+                            id: null,
+                            name: "",
+                            displayOrder: "",
+                        });
+
+                        setShowModal(true);
+                    }}
                     type="button"
-                    className="px-4 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="px-4 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
                 >
                     Create New Category
                 </button>
 
                 {showModal && (
-                    <AddCategoryModal
+                    <CategoryModal
                         setShowModal={setShowModal}
-                        setCategoryName={setCategoryName}
-                        setCategoryOrder={setCategoryOrder}
-                        AddCategory={AddCategory}
                         errOnName={errOnName}
                         errOnDisplayOrder={errOnDisplayOrder}
+                        AddCategory={AddCategory}
+                        HandleUpdate={HandleUpdate}
+                        newCategoryObj={newCategoryObj}
+                        setNewCategoryObj={setNewCategoryObj}
                     />
                 )}
-
             </div>
+
             <div className="overflow-x-auto">
                 <table className="min-w-full border border-gray-200 divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -70,25 +126,50 @@ function CategoryPage() {
                             <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">
                                 ID
                             </th>
+
                             <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">
                                 Category Name
                             </th>
+
                             <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">
                                 Display Order
                             </th>
+
+                            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">
+                                Action
+                            </th>
                         </tr>
                     </thead>
+
                     <tbody className="bg-white divide-y divide-gray-100">
-                        {categoryData.map((category) => (
+                        {fetchedCategoryList.map((category) => (
                             <tr key={category.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-2 text-sm text-gray-800">
                                     {category.id}
                                 </td>
+
                                 <td className="px-4 py-2 text-sm text-gray-800">
                                     {category.name}
                                 </td>
+
                                 <td className="px-4 py-2 text-sm text-gray-800">
                                     {category.displayOrder}
+                                </td>
+
+                                <td>
+                                    <button
+                                        onClick={() => HandleUpdateModal(category.id)}
+                                        className="bg-green-800 rounded text-white text-sm px-2 py-1"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        onClick={() => HandleDelete(category.id)}
+                                        className="bg-red-800 rounded text-white text-sm px-2 py-1 ml-1"
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -96,7 +177,7 @@ function CategoryPage() {
                 </table>
             </div>
         </div>
-    )
+    );
 }
 
-export default CategoryPage
+export default CategoryPage;
