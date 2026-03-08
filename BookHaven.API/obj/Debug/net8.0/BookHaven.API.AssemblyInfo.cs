@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookHaven.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ceed8e2511d052936521f792ae681ba11dadc18")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6dcb187fc016a5a8332549de7f2f1c98285af70d")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookHaven.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookHaven.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
