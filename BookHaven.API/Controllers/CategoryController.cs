@@ -1,4 +1,5 @@
 using BookHaven.API.Data;
+using BookHaven.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,5 +18,26 @@ public class CategoryController : ControllerBase
     {
         var categroyList = await _context.Category.ToListAsync();
         return Ok(categroyList);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(Category category)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            await _context.AddAsync(category);
+            await _context.SaveChangesAsync();
+            System.Console.WriteLine("Added Successfully");
+            return Ok(category);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error creating category", error = ex.Message });
+        }
     }
 }
