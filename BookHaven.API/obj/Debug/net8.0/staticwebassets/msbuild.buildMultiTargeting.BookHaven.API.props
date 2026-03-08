@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/BookHaven.API.props" />
-</Project>
