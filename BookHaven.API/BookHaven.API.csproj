@@ -16,4 +16,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookHaven.Models\BookHaven.Models.csproj" />
+    <ProjectReference Include="..\BookHaven.DataAccess\BookHaven.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

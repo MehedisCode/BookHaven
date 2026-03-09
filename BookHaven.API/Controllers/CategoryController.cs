@@ -1,5 +1,5 @@
-using BookHaven.API.Data;
-using BookHaven.API.Models;
+using BookHaven.Models;
+using BookHaven.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHaven.API.Models;
+namespace BookHaven.Models;
 
 public class Category
 {

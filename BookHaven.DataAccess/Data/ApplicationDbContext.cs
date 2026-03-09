@@ -1,7 +1,7 @@
-using BookHaven.API.Models;
 using Microsoft.EntityFrameworkCore;
+using BookHaven.Models;
 
-namespace BookHaven.API.Data;
+namespace BookHaven.DataAccess.Data;
 
 public class ApplicationDbContext : DbContext
 {
