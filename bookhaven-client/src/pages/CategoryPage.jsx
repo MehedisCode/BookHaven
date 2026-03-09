@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CategoryModal from "../components/CategoryModal";
+import { useNotification } from "../utils/useNotification";
+import toast, { Toaster } from "react-hot-toast";
+import Notification from "../components/Notification";
 
 function CategoryPage() {
     const [refresh, setRefresh] = useState(false);
@@ -8,6 +11,8 @@ function CategoryPage() {
 
     const [errOnName, setErrOnName] = useState();
     const [errOnDisplayOrder, setErrOnDisplayOrder] = useState();
+
+    const { showNotification, setNotification, notification } = useNotification()
 
     const [fetchedCategoryList, setFetchedCategoryList] = useState([]);
 
@@ -27,9 +32,9 @@ function CategoryPage() {
             };
 
             await axios.post(url, payload);
-
             setShowModal(false);
             setRefresh(!refresh);
+            toast.success("Category created successfully!")
         } catch (error) {
             setErrOnName(error.response?.data?.Name);
             setErrOnDisplayOrder(error.response?.data?.DisplayOrder);
@@ -38,9 +43,7 @@ function CategoryPage() {
 
     async function HandleUpdateModal(id) {
         let findCategoryObj = fetchedCategoryList.filter((obj) => obj.id == id)[0];
-
         setNewCategoryObj(findCategoryObj);
-
         setShowModal(true);
     }
 
@@ -50,6 +53,7 @@ function CategoryPage() {
 
             setShowModal(false);
             setRefresh(!refresh);
+            toast.success("Category updated successfully!")
         } catch (err) {
             console.log("Error updating data.\n", err);
         }
@@ -58,12 +62,10 @@ function CategoryPage() {
     async function HandleDelete(id) {
         try {
             var confirm = window.confirm("Sure! You wanna delete item?");
-
             if (!confirm) return;
-
             await axios.delete(`${url}/${id}`);
-
             setRefresh(!refresh);
+            toast.success("Category Deleted successfully!")
         } catch (err) {
             console.log(err);
         }
@@ -84,6 +86,7 @@ function CategoryPage() {
 
     return (
         <div className="p-6">
+            <Toaster position="top-right" />
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-3xl font-bold">Category List</h1>
 
