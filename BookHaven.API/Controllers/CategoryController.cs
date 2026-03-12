@@ -1,7 +1,7 @@
+using System.Threading.Tasks;
 using BookHaven.Models;
-using BookHaven.DataAccess.Data;
+using BookHaven.DataAccess.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookHaven.API.Controllers;
 
@@ -9,17 +9,17 @@ namespace BookHaven.API.Controllers;
 [Route("api/[controller]")]
 public class CategoryController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryController(ApplicationDbContext context)
+    public CategoryController(ICategoryRepository categoryRepository)
     {
-        _context = context;
+        _categoryRepository = categoryRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetData()
     {
-        var categoryList = await _context.Category.ToListAsync();
+        var categoryList = await _categoryRepository.GetAllAsync();
         return Ok(categoryList);
     }
 
@@ -28,9 +28,9 @@ public class CategoryController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-        await _context.Category.AddAsync(category);
-        await _context.SaveChangesAsync();
+        
+        _categoryRepository.Add(category);
+        await _categoryRepository.SaveAsync();
 
         return CreatedAtAction(nameof(GetData), new { id = category.Id }, category);
     }
@@ -38,13 +38,13 @@ public class CategoryController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var data = await _context.Category.FindAsync(id);
+        var data = await _categoryRepository.GetAsync(e => e.Id == id);
 
         if (data == null)
             return NotFound();
-
-        _context.Category.Remove(data);
-        await _context.SaveChangesAsync();
+        
+        _categoryRepository.Remove(data);
+        await _categoryRepository.SaveAsync();
 
         return Ok(new { message = "Deleted successfully" });
     }
@@ -55,16 +55,14 @@ public class CategoryController : ControllerBase
         if (id != obj.Id)
             return BadRequest();
 
-        var data = await _context.Category.FindAsync(id);
+        var data = await _categoryRepository.GetAsync(e => e.Id == id);
 
         if (data == null)
             return NotFound();
 
-        data.Name = obj.Name;
-        data.DisplayOrder = obj.DisplayOrder;
+        _categoryRepository.Update(obj);
+        await _categoryRepository.SaveAsync();
 
-        await _context.SaveChangesAsync();
-
-        return Ok(data);
+        return Ok(obj);
     }
 }
