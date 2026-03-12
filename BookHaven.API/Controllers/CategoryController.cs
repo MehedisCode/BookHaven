@@ -9,17 +9,17 @@ namespace BookHaven.API.Controllers;
 [Route("api/[controller]")]
 public class CategoryController : ControllerBase
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CategoryController(ICategoryRepository categoryRepository)
+    public CategoryController(IUnitOfWork unitOfWork)
     {
-        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetData()
     {
-        var categoryList = await _categoryRepository.GetAllAsync();
+        var categoryList = await _unitOfWork.Category.GetAllAsync();
         return Ok(categoryList);
     }
 
@@ -29,8 +29,8 @@ public class CategoryController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        _categoryRepository.Add(category);
-        await _categoryRepository.SaveAsync();
+        _unitOfWork.Category.Add(category);
+        await _unitOfWork.SaveAsync();
 
         return CreatedAtAction(nameof(GetData), new { id = category.Id }, category);
     }
@@ -38,13 +38,13 @@ public class CategoryController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var data = await _categoryRepository.GetAsync(e => e.Id == id);
+        var data = await _unitOfWork.Category.GetAsync(e => e.Id == id);
 
         if (data == null)
             return NotFound();
         
-        _categoryRepository.Remove(data);
-        await _categoryRepository.SaveAsync();
+        _unitOfWork.Category.Remove(data);
+        await _unitOfWork.SaveAsync();
 
         return Ok(new { message = "Deleted successfully" });
     }
@@ -55,14 +55,15 @@ public class CategoryController : ControllerBase
         if (id != obj.Id)
             return BadRequest();
 
-        var data = await _categoryRepository.GetAsync(e => e.Id == id);
+        var data = await _unitOfWork.Category.GetAsync(e => e.Id == id);
 
         if (data == null)
             return NotFound();
-
-        _categoryRepository.Update(obj);
-        await _categoryRepository.SaveAsync();
-
+        
+        data.Name = obj.Name;
+        data.DisplayOrder = obj.DisplayOrder;
+        await _unitOfWork.SaveAsync();
+        
         return Ok(obj);
     }
 }

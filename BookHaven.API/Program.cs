@@ -26,7 +26,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     }
 );
 
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddCors(options =>
 {
