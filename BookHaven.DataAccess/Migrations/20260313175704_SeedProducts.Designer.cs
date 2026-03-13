@@ -3,6 +3,7 @@ using BookHaven.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookHaven.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313175704_SeedProducts")]
+    partial class SeedProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +84,20 @@ namespace BookHaven.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Product");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Author = "Mehedi",
+                            Description = "Description 1",
+                            ISBN = "Isbn",
+                            ListPrice = 100.0,
+                            Price = 100.0,
+                            Price100 = 60.0,
+                            Price50 = 80.0,
+                            Title = "Book1"
+                        });
                 });
 #pragma warning restore 612, 618
         }

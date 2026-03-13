@@ -3,6 +3,7 @@ import HomePage from "../pages/HomePage"
 import PrivacyPage from "../pages/PrivacyPage"
 import CategoryPage from "../pages/CategoryPage"
 import MainLayout from "../layouts/MainLayout"
+import ProductPage from "../pages/ProductPage"
 
 const router = createBrowserRouter([
     {
@@ -18,8 +19,12 @@ const router = createBrowserRouter([
                 element: <PrivacyPage />
             },
             {
-                path: "/categories",
+                path: "/category",
                 element: <CategoryPage />
+            },
+            {
+                path: "/product",
+                element: <ProductPage />
             }
         ]
     },

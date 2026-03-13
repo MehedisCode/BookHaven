@@ -12,8 +12,6 @@ function CategoryPage() {
     const [errOnName, setErrOnName] = useState();
     const [errOnDisplayOrder, setErrOnDisplayOrder] = useState();
 
-    const { showNotification, setNotification, notification } = useNotification()
-
     const [fetchedCategoryList, setFetchedCategoryList] = useState([]);
 
     const [newCategoryObj, setNewCategoryObj] = useState({
