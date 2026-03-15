@@ -8,36 +8,47 @@ namespace BookHaven.DataAccess.Repository;
 public class Repository<T> : IRepository<T> where T : class
 {
     private readonly ApplicationDbContext _context;
-    private readonly DbSet<T> dbSet;
+    private readonly DbSet<T> _dbSet;
     
-    public Repository(ApplicationDbContext context)
+    protected Repository(ApplicationDbContext context)
     {
         _context = context;
-        dbSet = _context.Set<T>();
+        _dbSet = _context.Set<T>();
     }
     
-    public async Task<List<T>> GetAllAsync()
+    public async Task<List<T>> GetAllAsync(string? includeProperties = null)
     {
-        return await dbSet.ToListAsync();
+        IQueryable<T> query = _dbSet;  
+
+        if (includeProperties != null)
+        {
+            foreach (var property in includeProperties
+                         .Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(property);  
+            }
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> filter)
     {
-        return await dbSet.FirstOrDefaultAsync(filter);
+        return await _dbSet.FirstOrDefaultAsync(filter);
     }
 
     public void Add(T entity)
     {
-        dbSet.Add(entity);
+        _dbSet.Add(entity);
     }
 
     public void Remove(T entity)
     {
-        dbSet.Remove(entity);
+        _dbSet.Remove(entity);
     }
 
     public void RemoveRange(IEnumerable<T> entity)
     {
-        dbSet.RemoveRange(entity);
+        _dbSet.RemoveRange(entity);
     }
 }

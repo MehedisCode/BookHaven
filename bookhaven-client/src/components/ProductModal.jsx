@@ -16,9 +16,28 @@ function ProductModal({
         price: "",
         price50: "",
         price100: "",
+        categoryId: null
     });
 
+    const [categories, setCategories] = useState([]);
+
     const isEdit = newProductObj?.id !== null;
+
+    function handleSubmit() {
+        const payload = {
+            ...tempObj,
+            listPrice: Number(tempObj.listPrice),
+            price: Number(tempObj.price),
+            price50: Number(tempObj.price50),
+            price100: Number(tempObj.price100),
+        };
+
+        if (isEdit) {
+            HandleUpdate({ ...newProductObj, ...payload });
+        } else {
+            AddProduct(payload);
+        }
+    }
 
     useEffect(() => {
         if (isEdit) {
@@ -35,22 +54,12 @@ function ProductModal({
         }
     }, [newProductObj]);
 
-    function handleSubmit() {
-
-        const payload = {
-            ...tempObj,
-            listPrice: Number(tempObj.listPrice),
-            price: Number(tempObj.price),
-            price50: Number(tempObj.price50),
-            price100: Number(tempObj.price100),
-        };
-
-        if (isEdit) {
-            HandleUpdate({ ...newProductObj, ...payload });
-        } else {
-            AddProduct(payload);
-        }
-    }
+    // Fetch Categories 
+    useEffect(() => {
+        fetch("http://localhost:5106/api/Category")
+            .then((res) => res.json())
+            .then((data) => setCategories(data));
+    }, []);
 
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black/50 z-50">
@@ -169,11 +178,28 @@ function ProductModal({
                         />
                     </div>
 
+                    {/* DropDown of Categories  */}
+                    <div>
+                        <label className="text-sm font-medium">Category</label>
+                        <select
+                            value={tempObj.categoryId || ""}
+                            onChange={(e) =>
+                                setTempObj({ ...tempObj, categoryId: e.target.value })
+                            }
+                            className="border rounded px-3 py-2 w-full"
+                        >
+                            <option value="">-- Select Category --</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 {/* Footer */}
                 <div className="flex justify-end gap-3 mt-4">
-
                     <button
                         onClick={() => setShowModal(false)}
                         className="px-4 py-2 bg-gray-200 rounded"

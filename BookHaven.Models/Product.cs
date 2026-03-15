@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookHaven.Models;
 
@@ -23,4 +24,8 @@ public class Product
     public double Price50 { get; set; } // 50 - 99
     [Required]
     public double Price100 { get; set; } // 100+
+    
+    public int? CategoryId { get; set; }
+    [ForeignKey("CategoryId")]
+    public Category? Category { get; set; }
 }

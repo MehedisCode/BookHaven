@@ -18,10 +18,9 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
-        var categoryList = await _unitOfWork.Product.GetAllAsync();
+        var categoryList = await _unitOfWork.Product.GetAllAsync("Category");
         return Ok(categoryList);
     }
-    
     
     [HttpPost]
     public async Task<IActionResult> Create(Product category)
@@ -69,6 +68,7 @@ public class ProductController : ControllerBase
         data.Price = obj.Price;
         data.Price50 = obj.Price50;
         data.Price100 = obj.Price100;
+        data.CategoryId = obj.CategoryId;
 
         await _unitOfWork.SaveAsync();
         return Ok(obj);

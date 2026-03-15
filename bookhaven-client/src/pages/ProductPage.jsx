@@ -4,7 +4,6 @@ import ProductModal from "../components/ProductModal";
 import toast, { Toaster } from "react-hot-toast";
 
 function ProductPage() {
-
     const [refresh, setRefresh] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [productList, setProductList] = useState([]);
@@ -19,6 +18,7 @@ function ProductPage() {
         price: "",
         price50: "",
         price100: "",
+        categoryId: null
     });
 
     const url = "http://localhost:5106/api/Product";
@@ -48,6 +48,7 @@ function ProductPage() {
     }
 
     async function HandleUpdate(obj) {
+        console.log("obj - ", obj)
         try {
             await axios.put(`${url}/${obj.id}`, obj);
             toast.success("Product updated");
@@ -91,15 +92,11 @@ function ProductPage() {
 
     return (
         <div className="p-6">
-
             <Toaster position="top-right" />
-
             <div className="flex justify-between mb-4">
-
                 <h1 className="text-3xl font-bold">
                     Product List
                 </h1>
-
                 <button
                     onClick={() => {
                         setNewProductObj({
@@ -112,6 +109,7 @@ function ProductPage() {
                             price: "",
                             price50: "",
                             price100: "",
+                            categoryId: null
                         });
 
                         setShowModal(true);
@@ -120,7 +118,6 @@ function ProductPage() {
                 >
                     Create Product
                 </button>
-
             </div>
 
             {showModal && (
@@ -133,54 +130,42 @@ function ProductPage() {
             )}
 
             <table className="min-w-full border">
-
                 <thead className="bg-gray-100">
                     <tr>
                         <th className="p-2 border">Id</th>
                         <th className="p-2 border">Title</th>
                         <th className="p-2 border">Author</th>
                         <th className="p-2 border">Price</th>
+                        <th className="p-2 border">Category</th>
                         <th className="p-2 border">Action</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     {productList.map(p => (
-
                         <tr key={p.id} className="text-center">
-
                             <td className="border p-2">{p.id}</td>
                             <td className="border p-2">{p.title}</td>
                             <td className="border p-2">{p.author}</td>
                             <td className="border p-2">{p.price}</td>
-
+                            <td className="border p-2">{p.category?.name ?? "—"}</td>
                             <td className="border p-2">
-
                                 <button
                                     onClick={() => HandleUpdateModal(p.id)}
                                     className="bg-green-600 text-white px-2 py-1 rounded"
                                 >
                                     Edit
                                 </button>
-
                                 <button
                                     onClick={() => HandleDelete(p.id)}
                                     className="bg-red-600 text-white px-2 py-1 rounded ml-2"
                                 >
                                     Delete
                                 </button>
-
                             </td>
-
                         </tr>
-
                     ))}
-
                 </tbody>
-
             </table>
-
         </div>
     );
 }
