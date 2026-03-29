@@ -9,10 +9,12 @@ namespace BookHaven.API.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public ProductController(IUnitOfWork unitOfWork)
+    public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
         _unitOfWork = unitOfWork;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [HttpGet]
@@ -69,8 +71,44 @@ public class ProductController : ControllerBase
         data.Price50 = obj.Price50;
         data.Price100 = obj.Price100;
         data.CategoryId = obj.CategoryId;
+        data.ImageUrl = obj.ImageUrl;
 
         await _unitOfWork.SaveAsync();
         return Ok(obj);
+    }
+    
+    [HttpPost("upload-product-image")]
+    public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string? oldImageUrl)
+    {
+        Console.WriteLine($"Old image URL received: {oldImageUrl}"); // 👈 debug check
+
+        if (file == null || file.Length == 0)
+            return BadRequest("No file uploaded.");
+
+        if (!string.IsNullOrEmpty(oldImageUrl))
+        {
+            string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, oldImageUrl.TrimStart('/'));
+            Console.WriteLine($"Attempting to delete: {oldFilePath}"); // 👈 debug check
+            if (System.IO.File.Exists(oldFilePath))
+            {
+                System.IO.File.Delete(oldFilePath);
+                Console.WriteLine("Old image deleted."); // 👈 debug check
+            }
+            else
+            {
+                Console.WriteLine("Old file not found at path."); // 👈 debug check
+            }
+        }
+
+        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "products");
+        Directory.CreateDirectory(uploadsFolder);
+
+        string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+            await file.CopyToAsync(stream);
+
+        return Ok(new { imageUrl = $"/images/products/{uniqueFileName}" });
     }
 }
