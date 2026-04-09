@@ -15,7 +15,6 @@ public class Product
     [Required]
     public string Author { get; set; }
     [Required]
-    [Display(Name = "List Price")]
     public double ListPrice { get; set; }
     
     [Required]

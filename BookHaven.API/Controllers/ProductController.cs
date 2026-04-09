@@ -80,7 +80,7 @@ public class ProductController : ControllerBase
     [HttpPost("upload-product-image")]
     public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string? oldImageUrl)
     {
-        Console.WriteLine($"Old image URL received: {oldImageUrl}"); // 👈 debug check
+        Console.WriteLine($"Old image URL received: {oldImageUrl}"); 
 
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
@@ -88,15 +88,15 @@ public class ProductController : ControllerBase
         if (!string.IsNullOrEmpty(oldImageUrl))
         {
             string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, oldImageUrl.TrimStart('/'));
-            Console.WriteLine($"Attempting to delete: {oldFilePath}"); // 👈 debug check
+            Console.WriteLine($"Attempting to delete: {oldFilePath}"); 
             if (System.IO.File.Exists(oldFilePath))
             {
                 System.IO.File.Delete(oldFilePath);
-                Console.WriteLine("Old image deleted."); // 👈 debug check
+                Console.WriteLine("Old image deleted."); 
             }
             else
             {
-                Console.WriteLine("Old file not found at path."); // 👈 debug check
+                Console.WriteLine("Old file not found at path."); 
             }
         }
 

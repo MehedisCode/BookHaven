@@ -6,7 +6,6 @@ function ProductModal({
     setShowModal,
     newProductObj,
 }) {
-
     const [tempObj, setTempObj] = useState({
         title: "",
         description: "",
