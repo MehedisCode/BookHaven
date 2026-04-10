@@ -1,7 +1,12 @@
+using System.Text;
+using BookHaven.API;
 using BookHaven.DataAccess.Data;
 using BookHaven.DataAccess.Repository;
 using BookHaven.DataAccess.Repository.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +39,31 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Identity 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// JWT
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")
+                ),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -46,5 +76,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowReact");
 app.UseStaticFiles();
 app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 
+await DbInitializer.SeedRolesAsync(app.Services);
 app.Run();
+
