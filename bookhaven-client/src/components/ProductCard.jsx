@@ -1,6 +1,7 @@
 const BASE_URL = "http://localhost:5106";
 
 function ProductCard({ product, onClick }) {
+    console.log(product)
     return (
         <div
             onClick={() => onClick(product)}

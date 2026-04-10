@@ -24,7 +24,7 @@ function ProductDetails({ product, onBack }) {
                     <div className="flex flex-col md:flex-row">
 
                         {/* Image */}
-                        <div className="md:w-80 flex-0 bg-gray-50 flex items-center justify-center min-h-72">
+                        <div className="md:w-80 flex-shrink-0 bg-gray-50 flex items-center justify-center min-h-72">
                             {product.imageUrl ? (
                                 <img
                                     src={`${BASE_URL}${product.imageUrl}`}
