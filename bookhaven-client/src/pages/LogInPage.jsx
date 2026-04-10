@@ -18,7 +18,7 @@ function Login() {
         const res = await fetch(`${BASE_URL}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, testRole }),
         });
 
         if (!res.ok) { setError("Invalid email or password."); return; }

@@ -1,31 +1,49 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const [token, setToken] = useState(() => localStorage.getItem("token"));
-    const [role, setRole] = useState(() => localStorage.getItem("role"));
     const navigate = useNavigate();
 
-    function login(newToken, newRole) {
+    const user = useMemo(() => {
+        if (!token) return null;
+
+        const decoded = jwtDecode(token);
+
+        return {
+            role: decoded.role
+        };
+    }, [token]);
+
+    function login(newToken) {
         localStorage.setItem("token", newToken);
-        localStorage.setItem("role", newRole);
         setToken(newToken);
-        setRole(newRole);
-        navigate(newRole === "Admin" ? "/product" : "/");
+
+        const decoded = jwtDecode(newToken);
+        const role = decoded.role;
+
+        navigate(role === "Admin" ? "/product" : "/");
     }
 
     function logout() {
         localStorage.removeItem("token");
-        localStorage.removeItem("role");
         setToken(null);
-        setRole(null);
         navigate("/login");
     }
 
     return (
-        <AuthContext.Provider value={{ token, role, login, logout, isAuthenticated: !!token }}>
+        <AuthContext.Provider
+            value={{
+                token,
+                user,
+                login,
+                logout,
+                isAuthenticated: !!token
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

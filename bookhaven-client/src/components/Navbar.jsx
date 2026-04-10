@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
-    const { isAuthenticated, role, logout } = useAuth();
+    const { isAuthenticated, token, logout } = useAuth();
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -14,6 +16,12 @@ function Navbar() {
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const decoded = jwtDecode(token);
+        const role = decoded.role;
+        setRole(role);
     }, []);
 
     return (
