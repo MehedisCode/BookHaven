@@ -1,18 +1,34 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import CartItem from "../components/CartItem";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function CartPage() {
-    const { cart, loading, error, fetchCart } = useCart();
+    const { cart, loading, error, fetchCart, checkoutCart } = useCart();
     const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
             fetchCart().catch(() => { });
         }
     }, [isAuthenticated, fetchCart]);
+
+    const handleCheckout = async () => {
+        setIsCheckingOut(true);
+        try {
+            await checkoutCart();
+            toast.success("Order placed successfully!");
+            navigate("/order-success");
+        } catch (err) {
+            toast.error(err.message || "Failed to checkout. Please try again.");
+        } finally {
+            setIsCheckingOut(false);
+        }
+    };
 
     if (!isAuthenticated) {
         return (
@@ -90,11 +106,25 @@ function CartPage() {
                             <CartItem key={item.id} item={item} />
                         ))}
 
-                        <div className="border-t border-gray-100 p-6 flex justify-between items-center bg-gray-50 rounded-b-3xl">
-                            <span className="text-lg text-gray-600">Subtotal</span>
-                            <span className="text-3xl font-semibold text-gray-900">
-                                ${cart.subtotal?.toFixed(2) ?? "0.00"}
-                            </span>
+                        <div className="border-t border-gray-100 p-6 flex flex-col sm:flex-row justify-between items-center bg-gray-50 rounded-b-3xl gap-4">
+                            <div className="flex items-center gap-4">
+                                <span className="text-lg text-gray-600">Subtotal</span>
+                                <span className="text-3xl font-semibold text-gray-900">
+                                    ${cart.subtotal?.toFixed(2) ?? "0.00"}
+                                </span>
+                            </div>
+                            <button 
+                                onClick={handleCheckout} 
+                                disabled={isCheckingOut}
+                                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-8 py-3 rounded-2xl text-lg font-medium transition-colors flex items-center gap-2"
+                            >
+                                {isCheckingOut ? (
+                                    <>
+                                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                       Processing...
+                                    </>
+                                ) : "Proceed to Checkout"}
+                            </button>
                         </div>
                     </div>
                 )}

@@ -11,4 +11,5 @@ public interface ICartRepository : IRepository<Cart>
     Task<CartItem?> GetCartItemOwnedByUserAsync(string userId, int cartItemId);
 
     void RemoveCartItem(CartItem item);
+    void ClearCart(Cart cart);
 }

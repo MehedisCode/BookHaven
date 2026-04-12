@@ -7,6 +7,7 @@ import ProductPage from "../pages/ProductPage";
 import CartPage from "../pages/CartPage";
 import LoginPage from "../pages/LogInPage";
 import RegisterPage from "../pages/RegisterPage";
+import OrderSuccessPage from "../pages/OrderSuccessPage";
 import ProtectedRoute from "../routes/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -23,6 +24,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <CartPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "/order-success",
+                element: (
+                    <ProtectedRoute>
+                        <OrderSuccessPage />
                     </ProtectedRoute>
                 ),
             },

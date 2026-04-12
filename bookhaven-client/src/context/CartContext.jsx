@@ -125,6 +125,14 @@ export function CartProvider({ children }) {
         return data;
     }, [authFetch]);
 
+    const checkoutCart = useCallback(async () => {
+        const data = await authFetch("/api/checkout", {
+            method: "POST",
+        });
+        await fetchCart();
+        return data;
+    }, [authFetch, fetchCart]);
+
     const itemCount = useMemo(() => {
         return cart?.Items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
     }, [cart]);
@@ -138,7 +146,8 @@ export function CartProvider({ children }) {
         addToCart,
         updateQuantity,
         removeItem,
-    }), [cart, loading, error, itemCount, fetchCart, addToCart, updateQuantity, removeItem]);
+        checkoutCart,
+    }), [cart, loading, error, itemCount, fetchCart, addToCart, updateQuantity, removeItem, checkoutCart]);
 
     return (
         <CartContext.Provider value={value}>

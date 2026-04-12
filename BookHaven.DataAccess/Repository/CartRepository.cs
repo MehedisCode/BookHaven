@@ -39,4 +39,9 @@ public class CartRepository : Repository<Cart>, ICartRepository
     {
         _context.CartItem.Remove(item);
     }
+
+    public void ClearCart(Cart cart)
+    {
+        _context.CartItem.RemoveRange(cart.Items);
+    }
 }
