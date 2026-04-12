@@ -24,7 +24,7 @@ function Login() {
         if (!res.ok) { setError("Invalid email or password."); return; }
 
         const data = await res.json();
-        login(data.token, testRole);
+        login(data.token);
     }
 
     return (

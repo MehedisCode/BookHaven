@@ -1,12 +1,18 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { AuthProvider } from "../context/AuthContext";
+import { CartProvider } from "../context/CartContext";
+import { Toaster } from "react-hot-toast";
 
 function MainLayout() {
     return (
-        <div>
-            <Navbar />
-            <Outlet />
-        </div>
+        <AuthProvider>
+            <CartProvider>
+                <Navbar />
+                <Toaster position="top-right" />
+                <Outlet />
+            </CartProvider>
+        </AuthProvider>
     );
 }
 

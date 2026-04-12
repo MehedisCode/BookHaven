@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useMemo, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
@@ -28,6 +29,7 @@ function getRoleFromToken(token) {
 }
 
 export function AuthProvider({ children }) {
+    const navigate = useNavigate();
 
     // validate token synchronously before first render
     const [token, setToken] = useState(() => {
@@ -58,10 +60,12 @@ export function AuthProvider({ children }) {
     }, [token]);
 
     function login(newToken) {
-        const clean = typeof newToken === "string" ? newToken.trim() : "";
-        if (!clean) return;
-        localStorage.setItem("token", clean);
-        setToken(clean);
+        localStorage.setItem("token", newToken);
+        setToken(newToken);
+
+        const role = getRoleFromToken(newToken)
+
+        navigate(role === "Admin" ? "/product" : "/");
     }
 
     return (
