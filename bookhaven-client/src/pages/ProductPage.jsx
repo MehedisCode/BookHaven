@@ -48,7 +48,6 @@ function ProductPage() {
     }
 
     async function HandleUpdate(obj) {
-        console.log("obj - ", obj)
         try {
             await axios.put(`${url}/${obj.id}`, obj);
             toast.success("Product updated");

@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5106";
+import AddToCartButton from "./AddToCartButton";
+import { API_BASE_URL } from "../config/api";
 
 function ProductDetails({ product, onBack }) {
     return (
@@ -27,7 +28,7 @@ function ProductDetails({ product, onBack }) {
                         <div className="md:w-80 flex-shrink-0 bg-gray-50 flex items-center justify-center min-h-72">
                             {product.imageUrl ? (
                                 <img
-                                    src={`${BASE_URL}${product.imageUrl}`}
+                                    src={`${API_BASE_URL}${product.imageUrl}`}
                                     alt={product.title}
                                     className="w-full h-full object-cover"
                                 />
@@ -84,10 +85,14 @@ function ProductDetails({ product, onBack }) {
 
                             {/* Actions */}
                             <div className="flex gap-2.5">
-                                <button className="flex-1 py-2.5 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-700">
-                                    Add to cart
-                                </button>
-                                <button className="px-5 py-2.5 border border-gray-200 text-sm rounded-xl hover:bg-gray-50 text-gray-700">
+                                <AddToCartButton
+                                    productId={product.id}
+                                    className="flex-1"
+                                />
+                                <button
+                                    type="button"
+                                    className="px-5 py-2.5 border border-gray-200 text-sm rounded-xl hover:bg-gray-50 text-gray-700"
+                                >
                                     Save
                                 </button>
                             </div>

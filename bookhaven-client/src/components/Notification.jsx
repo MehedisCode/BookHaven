@@ -5,7 +5,7 @@ function Notification({ notification, onClose }) {
 
     useEffect(() => {
         if (notification) {
-            setVisible(true);  // 👈 fade in
+            setVisible(true);
         }
     }, [notification]);
 

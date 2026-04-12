@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import ProductCard from "../components/ProductCard"
+import ProductCard from "../components/ProductCard";
 import ProductDetails from "../components/ProductDetails";
-
-const BASE_URL = "http://localhost:5106";
+import { API_BASE_URL } from "../config/api";
 
 function Home() {
     const [products, setProducts] = useState([]);
@@ -11,7 +10,7 @@ function Home() {
     const [selected, setSelected] = useState(null);
 
     useEffect(() => {
-        fetch(`${BASE_URL}/api/Product`)
+        fetch(`${API_BASE_URL}/api/Product`)
             .then((r) => { if (!r.ok) throw new Error("Failed"); return r.json(); })
             .then(setProducts)
             .catch((e) => setError(e.message))
@@ -51,7 +50,7 @@ function Home() {
                 {error && (
                     <div className="text-center py-12">
                         <p className="text-sm text-red-500 mb-1">Could not load products.</p>
-                        <p className="text-xs text-gray-400">Make sure your API is running at {BASE_URL}</p>
+                        <p className="text-xs text-gray-400">Make sure your API is running at {API_BASE_URL}</p>
                     </div>
                 )}
 

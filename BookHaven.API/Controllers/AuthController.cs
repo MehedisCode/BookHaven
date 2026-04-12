@@ -42,9 +42,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {
-        Console.WriteLine($"TestRole: {dto.TestRole}");
-        Console.WriteLine(_config["ASPNETCORE_ENVIRONMENT"]);
-        
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
@@ -61,11 +58,11 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new Claim("email", user.Email),
-            new Claim("name", user.UserName)
+            new Claim("sub",   user.Id),
+            new Claim("email", user.Email   ?? string.Empty),
+            new Claim("name",  user.UserName ?? string.Empty),
+            new Claim("role",  role),
         };
-
-        claims.Add(new Claim("role", role));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_config["Jwt:Key"])

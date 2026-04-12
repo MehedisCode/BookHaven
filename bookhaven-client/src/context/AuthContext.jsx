@@ -1,49 +1,78 @@
-import { createContext, useContext, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useMemo, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem("token"));
-    const navigate = useNavigate();
-
-    const user = useMemo(() => {
-        if (!token) return null;
-
+function isTokenExpired(token) {
+    if (!token) return true;
+    try {
         const decoded = jwtDecode(token);
+        return decoded.exp < Date.now() / 1000;
+    } catch {
+        return true;
+    }
+}
 
-        return {
-            role: decoded.role
-        };
+function getRoleFromToken(token) {
+    if (!token) return null;
+    try {
+        const decoded = jwtDecode(token);
+        return (
+            decoded.role ??
+            decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ??
+            null
+        );
+    } catch {
+        return null;
+    }
+}
+
+export function AuthProvider({ children }) {
+
+    // validate token synchronously before first render
+    const [token, setToken] = useState(() => {
+        const stored = localStorage.getItem("token")?.trim() || null;
+        if (!stored || isTokenExpired(stored)) {
+            localStorage.removeItem("token");
+            return null;
+        }
+        return stored;
+    });
+
+    const logout = useCallback(() => {
+        localStorage.removeItem("token");
+        setToken(null);
+    }, []);
+
+    // auto logout if token expires while app is open
+    useEffect(() => {
+        if (token && isTokenExpired(token)) {
+            logout();
+        }
+    }, [token, logout]);
+
+    // user is computed synchronously from token — ready on first render
+    const user = useMemo(() => {
+        if (!token || isTokenExpired(token)) return null;
+        return { role: getRoleFromToken(token) };
     }, [token]);
 
     function login(newToken) {
-        localStorage.setItem("token", newToken);
-        setToken(newToken);
-
-        const decoded = jwtDecode(newToken);
-        const role = decoded.role;
-
-        navigate(role === "Admin" ? "/product" : "/");
-    }
-
-    function logout() {
-        localStorage.removeItem("token");
-        setToken(null);
-        navigate("/login");
+        const clean = typeof newToken === "string" ? newToken.trim() : "";
+        if (!clean) return;
+        localStorage.setItem("token", clean);
+        setToken(clean);
     }
 
     return (
-        <AuthContext.Provider
-            value={{
-                token,
-                user,
-                login,
-                logout,
-                isAuthenticated: !!token
-            }}
-        >
+        <AuthContext.Provider value={{
+            token,
+            user,
+            role: user?.role ?? null,
+            login,
+            logout,
+            isAuthenticated: !!user,
+        }}>
             {children}
         </AuthContext.Provider>
     );

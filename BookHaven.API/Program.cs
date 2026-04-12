@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using BookHaven.API;
 using BookHaven.DataAccess.Data;
@@ -39,26 +40,35 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Identity 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services
+    .AddIdentityCore<IdentityUser>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-// JWT
-builder.Services.AddAuthentication(options =>
+builder.Services
+    .AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
+        options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")
-                ),
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")
+            ),
             ValidateIssuer = false,
             ValidateAudience = false,
+            NameClaimType = "sub",
+            RoleClaimType = "role",
+            ClockSkew = TimeSpan.Zero,
         };
     });
 
@@ -75,9 +85,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReact");
 app.UseStaticFiles();
-app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 await DbInitializer.SeedRolesAsync(app.Services);
 app.Run();

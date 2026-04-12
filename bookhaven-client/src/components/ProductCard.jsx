@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5106";
+import AddToCartButton from "./AddToCartButton";
+import { API_BASE_URL } from "../config/api";
 
 function ProductCard({ product, onClick }) {
     return (
@@ -9,7 +10,7 @@ function ProductCard({ product, onClick }) {
             <div className="w-full h-44 flex items-center justify-center relative bg-gray-50">
                 {product.imageUrl ? (
                     <img
-                        src={`${BASE_URL}${product.imageUrl}`}
+                        src={`${API_BASE_URL}${product.imageUrl}`}
                         alt={product.title}
                         className="w-full h-full object-cover"
                     />
@@ -31,11 +32,21 @@ function ProductCard({ product, onClick }) {
                 </p>
             </div>
 
-            <div className="px-3 pb-3 flex items-center justify-between mt-1">
+            <div className="px-3 pb-2 flex items-center justify-between mt-1">
                 <span className="text-xs text-gray-400">As low as ${product.price100?.toFixed(2)}</span>
                 <span className="text-xs px-3 py-1.5 border border-indigo-300 text-indigo-600 rounded-lg">
                     View details
                 </span>
+            </div>
+
+            <div
+                className="px-3 pb-3"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <AddToCartButton
+                    productId={product.id}
+                    className="w-full py-2 text-xs"
+                />
             </div>
         </div>
     );

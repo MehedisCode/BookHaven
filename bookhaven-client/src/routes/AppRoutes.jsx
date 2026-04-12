@@ -4,7 +4,8 @@ import PrivacyPage from "../pages/PrivacyPage";
 import CategoryPage from "../pages/CategoryPage";
 import MainLayout from "../layouts/MainLayout";
 import ProductPage from "../pages/ProductPage";
-import LoginPage from "../pages/LoginPage";
+import CartPage from "../pages/CartPage";
+import LoginPage from "../pages/LogInPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoute from "../routes/ProtectedRoute";
 
@@ -17,6 +18,14 @@ const router = createBrowserRouter([
             { path: "/privacy", element: <PrivacyPage /> },
             { path: "/login", element: <LoginPage /> },
             { path: "/register", element: <RegisterPage /> },
+            {
+                path: "/cart",
+                element: (
+                    <ProtectedRoute>
+                        <CartPage />
+                    </ProtectedRoute>
+                ),
+            },
             {
                 path: "/category",
                 element: (

@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { jwtDecode } from "jwt-decode";
+import { useCart } from "../context/CartContext";
 
 function Navbar() {
-    const { isAuthenticated, token, logout } = useAuth();
+    const { isAuthenticated, logout, user } = useAuth();
+    const { itemCount } = useCart();
+    const role = user?.role;
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef(null);
-    const [role, setRole] = useState(null);
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -16,12 +17,6 @@ function Navbar() {
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    useEffect(() => {
-        const decoded = jwtDecode(token);
-        const role = decoded.role;
-        setRole(role);
     }, []);
 
     return (
@@ -57,6 +52,20 @@ function Navbar() {
             )}
 
             <Link to="/privacy" className="text-white font-bold hover:underline">Privacy</Link>
+
+            {isAuthenticated && (
+                <Link
+                    to="/cart"
+                    className="text-white font-bold hover:underline flex items-center gap-1.5"
+                >
+                    Cart
+                    {itemCount > 0 && (
+                        <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full min-w-[1.25rem] text-center">
+                            {itemCount > 99 ? "99+" : itemCount}
+                        </span>
+                    )}
+                </Link>
+            )}
 
             {/* Auth buttons */}
             <div className="ml-auto flex items-center gap-4">
