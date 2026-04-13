@@ -54,17 +54,25 @@ function Navbar() {
             <Link to="/privacy" className="text-white font-bold hover:underline">Privacy</Link>
 
             {isAuthenticated && (
-                <Link
-                    to="/cart"
-                    className="text-white font-bold hover:underline flex items-center gap-1.5"
-                >
-                    Cart
-                    {itemCount > 0 && (
-                        <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full min-w-[1.25rem] text-center">
-                            {itemCount > 99 ? "99+" : itemCount}
-                        </span>
-                    )}
-                </Link>
+                <>
+                    <Link
+                        to="/orders"
+                        className="text-white font-bold hover:underline"
+                    >
+                        Orders
+                    </Link>
+                    <Link
+                        to="/cart"
+                        className="text-white font-bold hover:underline flex items-center gap-1.5"
+                    >
+                        Cart
+                        {itemCount > 0 && (
+                            <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full min-w-[1.25rem] text-center">
+                                {itemCount > 99 ? "99+" : itemCount}
+                            </span>
+                        )}
+                    </Link>
+                </>
             )}
 
             {/* Auth buttons */}

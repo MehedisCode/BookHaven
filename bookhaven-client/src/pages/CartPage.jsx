@@ -88,7 +88,7 @@ function CartPage() {
                     </div>
                 )}
 
-                {!loading && !error && (!cart || cart.Items?.length === 0) && (
+                {!loading && !error && (!cart || cart?.items?.length == 0) && (
                     <div className="bg-white rounded-3xl p-16 text-center border border-gray-100">
                         <p className="text-2xl text-gray-600 mb-6">Your cart is empty</p>
                         <Link
@@ -113,15 +113,15 @@ function CartPage() {
                                     ${cart.subtotal?.toFixed(2) ?? "0.00"}
                                 </span>
                             </div>
-                            <button 
-                                onClick={handleCheckout} 
+                            <button
+                                onClick={handleCheckout}
                                 disabled={isCheckingOut}
                                 className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-8 py-3 rounded-2xl text-lg font-medium transition-colors flex items-center gap-2"
                             >
                                 {isCheckingOut ? (
                                     <>
-                                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                       Processing...
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Processing...
                                     </>
                                 ) : "Proceed to Checkout"}
                             </button>

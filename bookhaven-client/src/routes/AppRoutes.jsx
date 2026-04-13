@@ -5,6 +5,7 @@ import CategoryPage from "../pages/CategoryPage";
 import MainLayout from "../layouts/MainLayout";
 import ProductPage from "../pages/ProductPage";
 import CartPage from "../pages/CartPage";
+import OrdersPage from "../pages/OrdersPage";
 import LoginPage from "../pages/LogInPage";
 import RegisterPage from "../pages/RegisterPage";
 import OrderSuccessPage from "../pages/OrderSuccessPage";
@@ -24,6 +25,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <CartPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "/orders",
+                element: (
+                    <ProtectedRoute>
+                        <OrdersPage />
                     </ProtectedRoute>
                 ),
             },
