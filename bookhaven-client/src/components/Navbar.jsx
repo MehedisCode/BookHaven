@@ -129,15 +129,22 @@ function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
-          <NavLink to="/" end className={navLinkClass}>Home</NavLink>
-          <NavLink to="/privacy" className={navLinkClass}>Privacy</NavLink>
+          <NavLink to="/" end className={navLinkClass}>
+            Home
+          </NavLink>
+
+          {isAuthenticated ? (
+            <NavLink to="/orders" className={navLinkClass}>
+              Orders
+            </NavLink>
+          ) : null}
 
           {isAuthenticated && role === "Admin" && (
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setOpen((p) => !p)}
-                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100/80 hover:text-slate-900"
+                className="flex items-center gap-1 rounded-lg pl-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100/80 hover:text-slate-900"
                 aria-expanded={open}
               >
                 Admin

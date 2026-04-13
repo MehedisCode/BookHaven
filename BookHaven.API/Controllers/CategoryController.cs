@@ -18,8 +18,14 @@ public class CategoryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
-        var categoryList = await _unitOfWork.Category.GetAllAsync();
-        return Ok(categoryList);
+        var categories = await _unitOfWork.Category.GetAllAsync();
+
+        var orderedCategories = categories
+            .OrderBy(c => c.DisplayOrder)
+            .ThenBy(c => c.Name)
+            .ToList();
+
+        return Ok(orderedCategories);
     }
 
     [HttpPost]

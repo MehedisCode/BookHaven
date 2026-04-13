@@ -85,7 +85,7 @@ function HomePage() {
               <Button as="a" href="#featured-books" size="lg">
                 Explore books
               </Button>
-              <Button
+              {/* <Button
                 as={Link}
                 to="/login"
                 variant="outline"
@@ -93,7 +93,7 @@ function HomePage() {
                 className="border-indigo-100"
               >
                 Sign in to shop
-              </Button>
+              </Button> */}
             </div>
           </div>
           <div className="mt-14 grid max-w-lg grid-cols-3 gap-3 sm:max-w-xl sm:gap-4 lg:absolute lg:right-8 lg:top-1/2 lg:mt-0 lg:max-w-md lg:-translate-y-1/2 xl:right-12">
@@ -141,11 +141,10 @@ function HomePage() {
                       .getElementById("featured-books")
                       ?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-                    categoryFilter === null
+                  className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${categoryFilter === null
                       ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
                       : "border-slate-100 bg-white hover:border-indigo-100"
-                  }`}
+                    }`}
                 >
                   <span className="text-2xl" aria-hidden>
                     📚
@@ -172,11 +171,10 @@ function HomePage() {
                           .getElementById("featured-books")
                           ?.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-                        categoryFilter === c.id
+                      className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${categoryFilter === c.id
                           ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
                           : "border-slate-100 bg-white hover:border-indigo-100"
-                      }`}
+                        }`}
                     >
                       <span className="text-2xl" aria-hidden>
                         🏷️
