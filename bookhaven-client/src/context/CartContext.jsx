@@ -134,7 +134,8 @@ export function CartProvider({ children }) {
     }, [authFetch, fetchCart]);
 
     const itemCount = useMemo(() => {
-        return cart?.Items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+        const items = cart?.items ?? cart?.Items ?? [];
+        return items.reduce((sum, item) => sum + (item.quantity || 0), 0);
     }, [cart]);
 
     const value = useMemo(() => ({

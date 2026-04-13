@@ -96,7 +96,7 @@ function ProductModal({
     }, []);
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/50 z-50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
             <div className="bg-white rounded-lg p-6 w-full max-w-lg">
 
                 {/* Header */}

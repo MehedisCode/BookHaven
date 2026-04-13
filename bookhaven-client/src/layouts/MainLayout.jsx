@@ -8,9 +8,17 @@ function MainLayout() {
     return (
         <AuthProvider>
             <CartProvider>
-                <Navbar />
-                <Toaster position="top-right" />
-                <Outlet />
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+                    <Navbar />
+                    <Toaster
+                        position="top-right"
+                        toastOptions={{
+                            className:
+                                "!rounded-xl !border !border-slate-200/80 !bg-white !text-slate-800 !shadow-lg",
+                        }}
+                    />
+                    <Outlet />
+                </div>
             </CartProvider>
         </AuthProvider>
     );

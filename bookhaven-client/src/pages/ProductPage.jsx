@@ -1,172 +1,196 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import BookCard from "../components/BookCard";
+import BookGridSkeleton from "../components/BookGridSkeleton";
+import PageContainer from "../components/PageContainer";
 import ProductModal from "../components/ProductModal";
+import SectionTitle from "../components/SectionTitle";
+import Button from "../components/ui/Button";
+import { API_BASE_URL } from "../config/api";
 import toast, { Toaster } from "react-hot-toast";
 
+const productUrl = `${API_BASE_URL}/api/Product`;
+
 function ProductPage() {
-    const [refresh, setRefresh] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [productList, setProductList] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [productList, setProductList] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
 
-    const [newProductObj, setNewProductObj] = useState({
-        id: null,
-        title: "",
-        description: "",
-        isbn: "",
-        author: "",
-        listPrice: "",
-        price: "",
-        price50: "",
-        price100: "",
-        categoryId: null
+  const [newProductObj, setNewProductObj] = useState({
+    id: null,
+    title: "",
+    description: "",
+    isbn: "",
+    author: "",
+    listPrice: "",
+    price: "",
+    price50: "",
+    price100: "",
+    categoryId: null,
+  });
+
+  async function fetchProducts() {
+    setListLoading(true);
+    try {
+      const res = await axios.get(productUrl);
+      setProductList(res.data);
+    } catch {
+      toast.error("Failed to fetch products");
+      setProductList([]);
+    } finally {
+      setListLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, [refresh]);
+
+  async function AddProduct(obj) {
+    try {
+      await axios.post(productUrl, obj);
+      toast.success("Product created");
+      setShowModal(false);
+      setRefresh(!refresh);
+    } catch (err) {
+      handleApiErrors(err);
+    }
+  }
+
+  async function HandleUpdate(obj) {
+    try {
+      await axios.put(`${productUrl}/${obj.id}`, obj);
+      toast.success("Product updated");
+      setShowModal(false);
+      setRefresh(!refresh);
+    } catch (err) {
+      handleApiErrors(err);
+    }
+  }
+
+  async function HandleDelete(id) {
+    if (!window.confirm("Delete this product?")) return;
+
+    try {
+      await axios.delete(`${productUrl}/${id}`);
+      toast.success("Product deleted");
+      setRefresh(!refresh);
+    } catch {
+      toast.error("Delete failed");
+    }
+  }
+
+  function HandleUpdateModal(id) {
+    const product = productList.find((p) => p.id === id);
+    setNewProductObj(product);
+    setShowModal(true);
+  }
+
+  function handleApiErrors(err) {
+    const errors = err.response?.data;
+
+    if (!errors) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    Object.values(errors).forEach((msg) => {
+      toast.error(msg);
     });
+  }
 
-    const url = "http://localhost:5106/api/Product";
+  function openCreateModal() {
+    setNewProductObj({
+      id: null,
+      title: "",
+      description: "",
+      isbn: "",
+      author: "",
+      listPrice: "",
+      price: "",
+      price50: "",
+      price100: "",
+      categoryId: null,
+    });
+    setShowModal(true);
+  }
 
-    async function fetchProducts() {
-        try {
-            const res = await axios.get(url);
-            setProductList(res.data);
-        } catch {
-            toast.error("Failed to fetch products");
-        }
-    }
+  return (
+    <div className="min-h-screen bg-slate-50 py-10 sm:py-12">
+      <Toaster position="top-right" />
+      <PageContainer>
+        <SectionTitle
+          eyebrow="Admin"
+          title="Product catalog"
+          subtitle="Manage inventory in a card layout. Shoppers see the same details on the storefront."
+          action={
+            <Button type="button" size="md" onClick={openCreateModal}>
+              + Create product
+            </Button>
+          }
+          className="mb-10"
+        />
 
-    useEffect(() => {
-        fetchProducts();
-    }, [refresh]);
+        {showModal ? (
+          <ProductModal
+            AddProduct={AddProduct}
+            HandleUpdate={HandleUpdate}
+            setShowModal={setShowModal}
+            newProductObj={newProductObj}
+          />
+        ) : null}
 
-    async function AddProduct(obj) {
-        try {
-            await axios.post(url, obj);
-            toast.success("Product created");
-            setShowModal(false);
-            setRefresh(!refresh);
-        } catch (err) {
-            handleApiErrors(err);
-        }
-    }
+        {listLoading ? <BookGridSkeleton count={6} /> : null}
 
-    async function HandleUpdate(obj) {
-        try {
-            await axios.put(`${url}/${obj.id}`, obj);
-            toast.success("Product updated");
-            setShowModal(false);
-            setRefresh(!refresh);
-        } catch (err) {
-            handleApiErrors(err);
-        }
-    }
+        {!listLoading && productList.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-slate-200 bg-white px-8 py-16 text-center shadow-sm">
+            <p className="text-lg font-medium text-slate-800">No products yet</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Create your first book listing to populate the grid.
+            </p>
+            <Button type="button" className="mt-6" onClick={openCreateModal}>
+              Create product
+            </Button>
+          </div>
+        ) : null}
 
-    async function HandleDelete(id) {
-        if (!window.confirm("Delete this product?")) return;
-
-        try {
-            await axios.delete(`${url}/${id}`);
-            toast.success("Product deleted");
-            setRefresh(!refresh);
-        } catch {
-            toast.error("Delete failed");
-        }
-    }
-
-    function HandleUpdateModal(id) {
-        const product = productList.find(p => p.id === id);
-        setNewProductObj(product);
-        setShowModal(true);
-    }
-
-    function handleApiErrors(err) {
-        const errors = err.response?.data;
-
-        if (!errors) {
-            toast.error("Something went wrong");
-            return;
-        }
-
-        Object.values(errors).forEach(msg => {
-            toast.error(msg);
-        });
-    }
-
-    return (
-        <div className="p-6">
-            <Toaster position="top-right" />
-            <div className="flex justify-between mb-4">
-                <h1 className="text-3xl font-bold">
-                    Product List
-                </h1>
-                <button
-                    onClick={() => {
-                        setNewProductObj({
-                            id: null,
-                            title: "",
-                            description: "",
-                            isbn: "",
-                            author: "",
-                            listPrice: "",
-                            price: "",
-                            price50: "",
-                            price100: "",
-                            categoryId: null
-                        });
-
-                        setShowModal(true);
-                    }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                    Create Product
-                </button>
-            </div>
-
-            {showModal && (
-                <ProductModal
-                    AddProduct={AddProduct}
-                    HandleUpdate={HandleUpdate}
-                    setShowModal={setShowModal}
-                    newProductObj={newProductObj}
-                />
-            )}
-
-            <table className="min-w-full border">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="p-2 border">Id</th>
-                        <th className="p-2 border">Title</th>
-                        <th className="p-2 border">Author</th>
-                        <th className="p-2 border">Price</th>
-                        <th className="p-2 border">Category</th>
-                        <th className="p-2 border">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {productList.map(p => (
-                        <tr key={p.id} className="text-center">
-                            <td className="border p-2">{p.id}</td>
-                            <td className="border p-2">{p.title}</td>
-                            <td className="border p-2">{p.author}</td>
-                            <td className="border p-2">{p.price}</td>
-                            <td className="border p-2">{p.category?.name ?? "—"}</td>
-                            <td className="border p-2">
-                                <button
-                                    onClick={() => HandleUpdateModal(p.id)}
-                                    className="bg-green-600 text-white px-2 py-1 rounded"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => HandleDelete(p.id)}
-                                    className="bg-red-600 text-white px-2 py-1 rounded ml-2"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+        {!listLoading && productList.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {productList.map((p) => (
+              <BookCard
+                key={p.id}
+                product={p}
+                showAddToCart
+                footer={
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 min-w-[5rem]"
+                      onClick={() => HandleUpdateModal(p.id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="danger"
+                      size="sm"
+                      className="flex-1 min-w-[5rem]"
+                      onClick={() => HandleDelete(p.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                }
+              />
+            ))}
+          </div>
+        ) : null}
+      </PageContainer>
+    </div>
+  );
 }
 
 export default ProductPage;
