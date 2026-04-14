@@ -49,7 +49,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(ci => ci.Product)
             .WithMany()
             .HasForeignKey(ci => ci.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Order>()
             .HasOne<IdentityUser>()
@@ -67,7 +67,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(oi => oi.Product)
             .WithMany()
             .HasForeignKey(oi => oi.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
  
