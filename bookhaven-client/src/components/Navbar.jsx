@@ -37,38 +37,24 @@ function AvatarDropdown({ role, logout }) {
 
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg shadow-slate-200/60">
-
-          {/* Role badge */}
           <div className="border-b border-slate-100 px-4 py-3">
             <p className="text-xs text-slate-400">Signed in as</p>
             <p className="mt-0.5 text-sm font-medium text-slate-800">{role}</p>
           </div>
-
-          {/* Links */}
           <div className="p-1.5">
-            <Link
-              to="/profile"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50"
-            >
+            <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50">
               <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               My profile
             </Link>
-            <Link
-              to="/orders"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50"
-            >
+            <Link to="/orders" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50">
               <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               My orders
             </Link>
           </div>
-
-          {/* Logout */}
           <div className="border-t border-slate-100 p-1.5">
             <button
               type="button"
@@ -81,7 +67,6 @@ function AvatarDropdown({ role, logout }) {
               Log out
             </button>
           </div>
-
         </div>
       )}
     </div>
@@ -117,20 +102,17 @@ function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
-        <Link
-          to="/"
-          className="flex shrink-0 items-center gap-2 rounded-lg outline-none ring-indigo-500/0 transition hover:ring-2 hover:ring-indigo-500/20 focus-visible:ring-2 focus-visible:ring-indigo-500/30"
-        >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-lg font-bold text-white shadow-md shadow-indigo-600/25">
-            B
-          </span>
+        <Link to="/" className="flex shrink-0 items-center gap-2 rounded-lg outline-none transition hover:ring-2 hover:ring-indigo-500/20 focus-visible:ring-2 focus-visible:ring-indigo-500/30">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-lg font-bold text-white shadow-md shadow-indigo-600/25">B</span>
           <span className="text-lg font-semibold tracking-tight text-slate-900">BookHaven</span>
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
           <NavLink to="/" end className={navLinkClass}>Home</NavLink>
-          <NavLink to="/privacy" className={navLinkClass}>Privacy</NavLink>
+          <NavLink to="/bestsellers" className={navLinkClass}>Bestsellers</NavLink>
+          <NavLink to="/new-releases" className={navLinkClass}>New releases</NavLink>
+          <NavLink to="/contact" className={navLinkClass}>Contact us</NavLink>
 
           {isAuthenticated && role === "Admin" && (
             <div className="relative" ref={dropdownRef}>
@@ -147,22 +129,16 @@ function Navbar() {
               </button>
               {open && (
                 <div className="absolute left-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-xl border border-slate-100 bg-white py-1 shadow-lg shadow-slate-200/60">
-                  <Link to="/category" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700">
-                    Categories
-                  </Link>
-                  <Link to="/product" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700">
-                    Products
-                  </Link>
+                  <Link to="/category" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700">Categories</Link>
+                  <Link to="/product" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700">Products</Link>
                 </div>
               )}
             </div>
           )}
         </nav>
 
-        {/* Right side actions */}
+        {/* Right side */}
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
-
-          {/* Cart */}
           <Link
             to={isAuthenticated ? "/cart" : "/login"}
             className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50/50 hover:text-indigo-700"
@@ -178,24 +154,17 @@ function Navbar() {
             )}
           </Link>
 
-          {/* Auth */}
           {isAuthenticated ? (
-            // ← Avatar dropdown replaces the old role badge + logout button
             <div className="hidden sm:block">
               <AvatarDropdown role={role} logout={logout} />
             </div>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/login" className="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                Log in
-              </Link>
-              <Link to="/register" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-600/25 transition hover:bg-indigo-700">
-                Register
-              </Link>
+              <Link to="/login" className="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Log in</Link>
+              <Link to="/register" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-600/25 transition hover:bg-indigo-700">Register</Link>
             </div>
           )}
 
-          {/* Mobile hamburger */}
           <button
             type="button"
             className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 md:hidden"
@@ -212,20 +181,11 @@ function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            aria-label="Close menu"
-            onClick={() => setMobileOpen(false)}
-          />
+          <button type="button" className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="absolute right-0 top-0 flex h-full w-[min(100%,20rem)] flex-col border-l border-slate-100 bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
               <span className="font-semibold text-slate-900">Menu</span>
-              <button
-                type="button"
-                className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
-                onClick={() => setMobileOpen(false)}
-              >
+              <button type="button" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -233,7 +193,9 @@ function Navbar() {
             </div>
             <nav className="flex flex-col gap-1 p-3">
               <Link to="/" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Home</Link>
-              <Link to="/privacy" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Privacy</Link>
+              <Link to="/bestsellers" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Bestsellers</Link>
+              <Link to="/new-releases" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>New releases</Link>
+              <Link to="/contact" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Contact us</Link>
               {isAuthenticated && (
                 <>
                   <Link to="/profile" className="rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>My profile</Link>
@@ -250,11 +212,7 @@ function Navbar() {
               {isAuthenticated ? (
                 <>
                   <span className="px-4 py-2 text-xs font-medium uppercase tracking-wide text-slate-400">Signed in · {role}</span>
-                  <button
-                    type="button"
-                    className="rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50"
-                    onClick={() => { setMobileOpen(false); logout(); }}
-                  >
+                  <button type="button" className="rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50" onClick={() => { setMobileOpen(false); logout(); }}>
                     Log out
                   </button>
                 </>

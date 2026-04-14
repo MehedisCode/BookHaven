@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
 import { Toaster } from "react-hot-toast";
+import Footer from "../components/Footer"
 
 function MainLayout() {
     return (
@@ -18,6 +19,7 @@ function MainLayout() {
                         }}
                     />
                     <Outlet />
+                    <Footer />
                 </div>
             </CartProvider>
         </AuthProvider>
