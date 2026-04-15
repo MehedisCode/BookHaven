@@ -16,17 +16,22 @@ function HomePage() {
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/Product`)
+    fetch(`${API_BASE_URL}/api/Product?page=${page}&pageSize=8`)
       .then((r) => {
         if (!r.ok) throw new Error("Failed");
         return r.json();
       })
-      .then(setProducts)
+      .then((r) => {
+        setProducts(r.data);
+        setTotalPages(r.totalPages)
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/Category`)
@@ -142,8 +147,8 @@ function HomePage() {
                       ?.scrollIntoView({ behavior: "smooth" });
                   }}
                   className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${categoryFilter === null
-                      ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
-                      : "border-slate-100 bg-white hover:border-indigo-100"
+                    ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
+                    : "border-slate-100 bg-white hover:border-indigo-100"
                     }`}
                 >
                   <span className="text-2xl" aria-hidden>
@@ -172,8 +177,8 @@ function HomePage() {
                           ?.scrollIntoView({ behavior: "smooth" });
                       }}
                       className={`flex h-full w-full flex-col items-start rounded-2xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${categoryFilter === c.id
-                          ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
-                          : "border-slate-100 bg-white hover:border-indigo-100"
+                        ? "border-indigo-200 bg-indigo-50/80 ring-2 ring-indigo-500/20"
+                        : "border-slate-100 bg-white hover:border-indigo-100"
                         }`}
                     >
                       <span className="text-2xl" aria-hidden>
@@ -258,6 +263,36 @@ function HomePage() {
               ))}
             </div>
           ) : null}
+
+          {/* Pagination  */}
+          <div className="flex justify-center items-center gap-2 mt-10">
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              disabled={page === 1}
+              className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`px-3 py-1 rounded ${page === i + 1 ? "bg-indigo-600 text-white" : "bg-gray-200"
+                  }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+              disabled={page === totalPages}
+              className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </section>
 
         <section

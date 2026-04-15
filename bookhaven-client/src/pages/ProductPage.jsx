@@ -16,6 +16,8 @@ function ProductPage() {
   const [showModal, setShowModal] = useState(false);
   const [productList, setProductList] = useState([]);
   const [listLoading, setListLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [newProductObj, setNewProductObj] = useState({
     id: null,
@@ -33,8 +35,10 @@ function ProductPage() {
   async function fetchProducts() {
     setListLoading(true);
     try {
-      const res = await axios.get(productUrl);
-      setProductList(res.data);
+      const res = await axios.get(`${productUrl}?page=${page}&pageSize=8`);
+
+      setProductList(res.data.data);
+      setTotalPages(res.data.totalPages);
     } catch {
       toast.error("Failed to fetch products");
       setProductList([]);
@@ -42,10 +46,6 @@ function ProductPage() {
       setListLoading(false);
     }
   }
-
-  useEffect(() => {
-    fetchProducts();
-  }, [refresh]);
 
   async function AddProduct(obj) {
     try {
@@ -115,6 +115,10 @@ function ProductPage() {
     });
     setShowModal(true);
   }
+
+  useEffect(() => {
+    fetchProducts();
+  }, [refresh, page]);
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 sm:py-12">
@@ -188,6 +192,34 @@ function ProductPage() {
             ))}
           </div>
         ) : null}
+        <div className="flex justify-center items-center gap-2 mt-10">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 rounded ${page === i + 1 ? "bg-indigo-600 text-white" : "bg-gray-200"
+                }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </PageContainer>
     </div>
   );

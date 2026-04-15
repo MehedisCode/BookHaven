@@ -18,10 +18,26 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync(int page = 1, int pageSize = 8)
     {
-        var categoryList = await _unitOfWork.Product.GetAllAsync("Category");
-        return Ok(categoryList);
+        var query = await _unitOfWork.Product.GetAllAsync("Category");
+
+        var totalItems = query.Count();
+
+        var items = query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return Ok(new
+        {
+            data = items,
+            totalItems,
+            page,
+            pageSize,
+            totalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+        });
     }
     
     [HttpPost]
